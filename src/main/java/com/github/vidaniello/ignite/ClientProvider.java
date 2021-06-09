@@ -1,5 +1,7 @@
 package com.github.vidaniello.ignite;
 
+import static org.apache.ignite.internal.IgniteComponentType.SPRING;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -7,14 +9,18 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 
 import org.apache.ignite.Ignite;
+import org.apache.ignite.IgniteCheckedException;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.configuration.IgniteConfiguration;
+import org.apache.ignite.internal.util.spring.IgniteSpringHelper;
+import org.apache.ignite.lang.IgniteBiTuple;
 
 public final class ClientProvider {
 
@@ -28,26 +34,86 @@ public final class ClientProvider {
 		return instance;
 	}
 	
-	
-	private URL springConfigurationURL;
-	
-	private IgniteConfiguration conf;
-	
-	
-	private Map<String,Map<Type,Object>> local_pool;
+
+	/**
+	 * Key is clusterTag, value is the initialized client
+	 */
+	private Map<String,Ignite> local_pool = new HashMap<>();
 	
 	private ClientProvider() {
+		Ignition.setClientMode(true);
 		loadProperties();
 	}
 	
 	/**
-	 * Get Ignite client by clusterTag
+	 * Get Ignite client by clusterTag.
 	 * @param clusterTag Case sensitive
 	 * @return
+	 * @throws Exception 
 	 */
-	public synchronized Ignite ignite(String clusterTag) {
+	public synchronized Ignite ignite(String clusterTag) throws Exception {
 		
-		return null;
+		if(clusterTag==null)return ignite();
+		if(clusterTag.isEmpty()) return ignite();
+		
+		return getOrStart(getMapFromPropertiesByClusterTag(clusterTag), false);
+	}
+	
+	/**
+	 * Get the 'default.clusterTag' configured client, if is present, else, a default config ignite client.
+	 * @return
+	 * @throws Exception 
+	 */
+	public synchronized Ignite ignite() throws Exception {
+		return getOrStart(getMapFromPropertiesByIdentation("default"), true);
+	}
+	
+	@SuppressWarnings("resource")
+	private Ignite getOrStart(Map<String,String> mapProperties, boolean isDefault) throws Exception {
+		
+		if(!isDefault && mapProperties.isEmpty())
+			throw new Exception("Request 'clusterTag' not present in "+property_filename);
+		
+		String clusterTag = mapProperties.get("clusterTag");
+		if(mapProperties.isEmpty())
+			clusterTag = "_default_net_";
+			
+		if(!local_pool.containsKey(clusterTag)) {
+			
+			IgniteConfiguration ic = new IgniteConfiguration();
+			
+			if(!mapProperties.isEmpty()) {
+				
+				URL springConfigurationURL = null;
+				IgniteSpringHelper spring = SPRING.create(false);
+				
+				try {
+					springConfigurationURL = new URL(mapProperties.get("uri"));
+				}catch(MalformedURLException mue) {
+					File file = new File(mapProperties.get("uri"));
+					if(file.exists()) 
+						try {
+							springConfigurationURL = file.toURI().toURL();
+						}catch(MalformedURLException mue2) {
+							
+						}
+				}
+				
+				if(springConfigurationURL!=null) {
+					IgniteBiTuple<Collection<IgniteConfiguration>, ?> ib = spring.loadConfigurations(springConfigurationURL);
+					Collection<IgniteConfiguration> icc = ib.get1();
+					if(!icc.isEmpty()) 
+						ic = icc.iterator().next();
+				}
+				
+			}
+			
+			ic.setClientMode(true);
+			Ignite ignite = Ignition.getOrStart(ic);
+			
+			local_pool.put(clusterTag, ignite);
+		}
+		return local_pool.get(clusterTag);
 	}
 	
 	/**
