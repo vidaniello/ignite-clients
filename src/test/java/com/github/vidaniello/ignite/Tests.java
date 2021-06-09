@@ -2,6 +2,7 @@ package com.github.vidaniello.ignite;
 
 import java.util.Map;
 
+import org.apache.ignite.Ignite;
 import org.apache.ignite.internal.util.IgniteUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,6 +22,22 @@ public class Tests {
 	}
 	
 	private Logger log = LogManager.getLogger();
+	
+	@Test
+	public void tesClientLocalTestnet() {
+		try {
+			
+			Ignite testnet = ClientProvider.instance().ignite();
+			
+			
+			int i = 0;
+			//testnet.close();
+		}catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+	}
+	
+	
 	
 	@Test
 	public void tesLoadingConfig() {
