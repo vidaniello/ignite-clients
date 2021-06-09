@@ -1,7 +1,11 @@
 package com.github.vidaniello.ignite;
 
+import java.util.Map;
+
+import org.apache.ignite.internal.util.IgniteUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class Tests {
@@ -19,8 +23,23 @@ public class Tests {
 	private Logger log = LogManager.getLogger();
 	
 	@Test
-	public void tesOne() {
+	public void tesLoadingConfig() {
 		try {
+			Map<String,String> testnet =  ClientProvider.instance().getMapFromPropertiesByClusterTag("testnet");
+			Map<String,String> mainnet =  ClientProvider.instance().getMapFromPropertiesByClusterTag("mainnet");
+			Map<String,String> other =  ClientProvider.instance().getMapFromPropertiesByClusterTag("other");
+			Map<String,String> empty =  ClientProvider.instance().getMapFromPropertiesByClusterTag("empty");
+			
+			Assert.assertTrue(testnet.get("clusterTag").equals("testnet"));
+			Assert.assertTrue(!testnet.get("uri").isEmpty());
+			
+			Assert.assertTrue(mainnet.get("clusterTag").equals("mainnet"));
+			Assert.assertTrue(!mainnet.get("uri").isEmpty());
+			
+			Assert.assertTrue(other.get("clusterTag").equals("other"));
+			Assert.assertTrue(!other.get("uri").isEmpty());
+			
+			Assert.assertTrue(empty.isEmpty());
 			
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
