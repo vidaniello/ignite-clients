@@ -29,6 +29,7 @@ public class Tests {
 			
 			Ignite testnet = ClientProvider.instance().ignite();
 			
+			Ignite testnetSame = ClientProvider.instance().ignite();
 			
 			int i = 0;
 			//testnet.close();

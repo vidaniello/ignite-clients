@@ -38,7 +38,7 @@ public final class ClientProvider {
 	/**
 	 * Key is clusterTag, value is the initialized client
 	 */
-	private Map<String,Ignite> local_pool = new HashMap<>();
+	private Map<String,IgniteConfiguration> allConfigs = new HashMap<>();
 	
 	private ClientProvider() {
 		Ignition.setClientMode(true);
@@ -78,7 +78,7 @@ public final class ClientProvider {
 		if(mapProperties.isEmpty())
 			clusterTag = "_default_net_";
 			
-		if(!local_pool.containsKey(clusterTag)) {
+		if(!allConfigs.containsKey(clusterTag)) {
 			
 			IgniteConfiguration ic = new IgniteConfiguration();
 			
@@ -109,11 +109,11 @@ public final class ClientProvider {
 			}
 			
 			ic.setClientMode(true);
-			Ignite ignite = Ignition.getOrStart(ic);
 			
-			local_pool.put(clusterTag, ignite);
+			allConfigs.put(clusterTag, ic);
 		}
-		return local_pool.get(clusterTag);
+		
+		return Ignition.getOrStart(allConfigs.get(clusterTag));
 	}
 	
 	/**
