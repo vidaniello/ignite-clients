@@ -1,4 +1,4 @@
-# ignite-clients
+# Welcome
 This dependency contain:
 1. A simple **ignite clients** util connector based on properies file.
 2. An useful abstraction of a simple logic for **object persistence**.
