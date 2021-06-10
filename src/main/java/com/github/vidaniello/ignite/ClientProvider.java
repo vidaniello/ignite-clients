@@ -68,7 +68,6 @@ public final class ClientProvider {
 		return getOrStart(getMapFromPropertiesByIdentation("default"), true);
 	}
 	
-	@SuppressWarnings("resource")
 	private Ignite getOrStart(Map<String,String> mapProperties, boolean isDefault) throws Exception {
 		
 		if(!isDefault && mapProperties.isEmpty())
