@@ -27,7 +27,10 @@ public final class ClientProvider {
 	private static String property_filename = "igniteClient.properties";
 	private static String systemProperty_property_filename = "IGNITE_CLIENT_PROPERTY_FILE";
 	
-	private static enum Type{client, configuration}
+	public static final String defaultPersistentRegionName = "persistent_region";
+	
+	
+	//private static enum Type{client, configuration}
 	
 	private static ClientProvider instance = new ClientProvider();
 	public static ClientProvider instance() {

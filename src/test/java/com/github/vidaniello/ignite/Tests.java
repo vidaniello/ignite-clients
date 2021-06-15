@@ -9,6 +9,13 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.reflections.Reflections;
+
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtField;
+import javassist.Loader;
+import javassist.Modifier;
 
 public class Tests {
 
@@ -23,6 +30,52 @@ public class Tests {
 	}
 	
 	private Logger log = LogManager.getLogger();
+	
+	/**
+	 * Make sure you have a server node started as default before starting this test.
+	 */
+	@Test //@Ignore
+	public void firstTestGenericEntities() {
+		try {		
+			
+			
+			
+			
+			
+			Reflections ref = new Reflections();
+			
+			/*
+			ClassPool pool = ClassPool.getDefault();
+			CtClass cc = pool.get(Person.class.getCanonicalName());
+			CtClass ccd = pool.get(IgniteEntityProxy.class.getCanonicalName());
+			cc.setSuperclass(ccd);
+			
+			CtField fi = new CtField(CtClass.floatType, "abefglie", cc);
+			fi.setModifiers(Modifier.PRIVATE);
+			cc.addField(fi);
+			
+			Object dd = cc.toClass().newInstance();
+			
+			
+			
+			Person per = new Person();
+			*/
+			
+			/*
+			Person per1 = IgniteEntityProxy.newInstance(Person.class);
+			String canname = per1.getClass().getCanonicalName();
+			Object d = per1.getName();
+			Object f = per1.getName();
+			Object g = per1.hashCode();
+			*/
+			
+			
+			
+			int stop = 0;
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
+	}
 	
 	/**
 	 * Make sure you have a server node started as default before starting this test.
