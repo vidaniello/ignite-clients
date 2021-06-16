@@ -22,10 +22,16 @@ import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.internal.util.spring.IgniteSpringHelper;
 import org.apache.ignite.lang.IgniteBiTuple;
 
+/**
+ * Client provider of ignite client node.
+ * @author Vincenzo D'Aniello (vidaniello@gmail.com) github.com/vidaniello
+ *
+ */
 public final class ClientProvider {
 
 	private static String property_filename = "igniteClient.properties";
 	private static String systemProperty_property_filename = "IGNITE_CLIENT_PROPERTY_FILE";
+	private static String defaulIdentitationName = "default";
 	
 	public static final String defaultPersistentRegionName = "persistent_region";
 	
@@ -42,10 +48,19 @@ public final class ClientProvider {
 	 * Key is clusterTag, value is the initialized client
 	 */
 	private Map<String,IgniteConfiguration> allConfigs = new HashMap<>();
+	private String defaultClusterTag;
 	
 	private ClientProvider() {
 		Ignition.setClientMode(true);
 		loadProperties();
+	}
+	
+	/**
+	 * Set the default clusterTag to connect when ClientProvider.ignite() is called. 
+	 * @param clusterTag
+	 */
+	public synchronized void setDefaultClusterTag(String clusterTag) {
+		defaultClusterTag = clusterTag;
 	}
 	
 	/**
@@ -68,7 +83,10 @@ public final class ClientProvider {
 	 * @throws Exception 
 	 */
 	public synchronized Ignite ignite() throws Exception {
-		return getOrStart(getMapFromPropertiesByIdentation("default"), true);
+		return defaultClusterTag==null ? 
+				getOrStart(getMapFromPropertiesByIdentation(defaulIdentitationName), true) 
+				: 
+				getOrStart(getMapFromPropertiesByClusterTag(defaultClusterTag), false);
 	}
 	
 	private Ignite getOrStart(Map<String,String> mapProperties, boolean isDefault) throws Exception {
