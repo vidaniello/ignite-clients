@@ -1,6 +1,7 @@
 package com.github.vidaniello.ignite;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.ignite.Ignite;
 import org.apache.ignite.internal.util.IgniteUtils;
@@ -10,6 +11,8 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.reflections.Reflections;
+
+import com.github.vidaniello.ignite.data.Entity;
 
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -35,7 +38,7 @@ public class Tests {
 	 * Make sure you have a server node started as default before starting this test.
 	 */
 	@Test //@Ignore
-	public void firstTestGenericEntities() {
+	public void firstFindEntities() {
 		try {		
 			
 			
@@ -43,6 +46,7 @@ public class Tests {
 			
 			
 			Reflections ref = new Reflections();
+			Set<Class<?>> res = ref.getTypesAnnotatedWith(Entity.class);
 			
 			/*
 			ClassPool pool = ClassPool.getDefault();
