@@ -1,5 +1,6 @@
 package com.github.vidaniello.ignite;
 
+import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,6 +14,10 @@ import org.junit.Test;
 import org.reflections.Reflections;
 
 import com.github.vidaniello.ignite.data.Entity;
+import com.github.vidaniello.ignite.data.IgniteEntityManager;
+import com.github.vidaniello.ignite.data.IgniteEntityManagerFactory;
+import com.github.vidaniello.ignite.entityexamples.Person;
+import com.github.vidaniello.ignite.entityexamples.Phone;
 
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -47,6 +52,25 @@ public class Tests {
 			
 			Reflections ref = new Reflections();
 			Set<Class<?>> res = ref.getTypesAnnotatedWith(Entity.class);
+			
+			IgniteEntityManager manager = IgniteEntityManagerFactory.instance();
+			
+			Phone ph1 = new Phone();
+			Phone ph2 = new Phone();
+			Phone ph3 = new Phone();
+			Phone ph4 = new Phone();
+			
+			Person person1 = new Person();
+			
+			person1.setPrivatePhone(ph1);
+			person1.getAllPhones().add(ph3);
+			person1.getAllPhones().add(ph4);
+			
+			manager.create(person1);
+			
+			
+			
+			
 			
 			/*
 			ClassPool pool = ClassPool.getDefault();

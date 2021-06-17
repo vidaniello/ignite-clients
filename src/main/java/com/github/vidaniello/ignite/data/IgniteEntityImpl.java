@@ -1,6 +1,8 @@
 package com.github.vidaniello.ignite.data;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.ignite.configuration.CacheConfiguration;
 
@@ -21,32 +23,34 @@ public abstract class IgniteEntityImpl<PRIMARY_KEY extends Serializable> impleme
 	 */
 	private static final long serialVersionUID = 1L;
 
-	/*
-	{
-		//Dinamyc agent
-		System.out.println("Ragiu");
-		
-	}
-	*/
-	
-	//private Map<Serializable,Serializable> data;
 	private PRIMARY_KEY _key_;
 	
-	/*
-	public final void save() {
-		
+	private Map<Serializable,Tuple<String,Serializable>> _data_;
+	
+	private synchronized Map<Serializable,Tuple<String,Serializable>> _getData(){
+		if(_data_==null)
+			_data_ = new HashMap<>();
+		return _data_;
 	}
 	
-	public final <T> T get() {
+	@SuppressWarnings("unchecked")
+	@Override
+	public synchronized <T extends Serializable> T get(String fieldName) throws Exception {
+		return (T) _getData().get(fieldName).getValue();
+	}
+	
+	@Override
+	public synchronized <T extends IgniteEntity<PRIMARY_KEY>> T put(String fieldName, Serializable value) throws Exception {
+		// TODO Auto-generated method stub
 		return null;
 	}
-	*/
+	
 	
 	@Override
 	public final PRIMARY_KEY getId() {
 		return _key_;
 	}
 	
-	public abstract CacheConfiguration<PRIMARY_KEY, ? extends IgniteEntity<PRIMARY_KEY>> getDefaultCacheConfiguration();
+	
 
 }

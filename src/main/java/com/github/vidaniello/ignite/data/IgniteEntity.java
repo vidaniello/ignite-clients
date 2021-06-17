@@ -15,4 +15,8 @@ public interface IgniteEntity<PRIMARY_KEY extends Serializable> extends Serializ
 
 	public PRIMARY_KEY getId();
 	
+	public <T extends Serializable> T get(String fieldName) throws Exception;
+	
+	public <T extends IgniteEntity<PRIMARY_KEY>> T put(String fieldName, Serializable value) throws Exception;
+	
 }
