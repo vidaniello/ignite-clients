@@ -1,6 +1,7 @@
 package com.github.vidaniello.ignite.data;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 import javax.cache.CacheException;
 
@@ -37,5 +38,33 @@ public class IgniteEntityManagerImpl implements IgniteEntityManager {
 		Long id = ClientProvider.instance().ignite().atomicSequence(entity.getClass().getCanonicalName(), 0, true).incrementAndGet();
 		//Field ifField = entity.getClass().getF
 		return id;
+	}
+
+
+	@Override
+	public <T extends Serializable> T remove(T entity) throws CacheException, Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public <T extends Serializable> T update(T entity) throws CacheException, Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public <T extends Serializable> T delete(T entity) throws CacheException, Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public <T extends Serializable> Collection<T> query(T entity) throws CacheException, Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

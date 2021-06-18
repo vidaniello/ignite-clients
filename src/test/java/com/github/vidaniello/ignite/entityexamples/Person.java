@@ -6,6 +6,7 @@ import java.util.HashSet;
 
 import com.github.vidaniello.ignite.data.Entity;
 import com.github.vidaniello.ignite.data.PrimaryKey;
+import com.github.vidaniello.ignite.data.relations.Relation;
 
 @Entity
 public class Person implements Serializable{
@@ -25,6 +26,7 @@ public class Person implements Serializable{
 	private Collection<Phone> allPhones;
 	private Collection<Phone> sharedPhones;
 	
+	private Collection<Relation> allPhoness;
 	
 	public Person() {
 		
