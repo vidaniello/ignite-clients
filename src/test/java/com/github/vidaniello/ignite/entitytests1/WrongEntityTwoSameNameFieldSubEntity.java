@@ -1,10 +1,6 @@
-package com.github.vidaniello.ignite.entitytests;
-
-import java.io.Serializable;
-import java.util.Date;
+package com.github.vidaniello.ignite.entitytests1;
 
 import com.github.vidaniello.ignite.data.Entity;
-import com.github.vidaniello.ignite.data.PrimaryKey;
 
 /**
  * Example annotated @Entity with wrong two same name lowecase fields
@@ -12,39 +8,36 @@ import com.github.vidaniello.ignite.data.PrimaryKey;
  *
  */
 @Entity
-public class EntityFatherOfWrongEntities implements Serializable {
+public class WrongEntityTwoSameNameFieldSubEntity extends EntityFatherOfWrongEntities {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	
-	@PrimaryKey
-	private Long id;
-	
-	private String aStringField;
+	private String anyField;
+	private Long anotherField;
 	
 	private Long duplicateThisFieldName;
 	
-	public EntityFatherOfWrongEntities() {
+	public WrongEntityTwoSameNameFieldSubEntity() {
 		
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getaStringField() {
-		return aStringField;
+	public String getAnyField() {
+		return anyField;
 	}
 	
-	public void setaStringField(String aStringField) {
-		this.aStringField = aStringField;
+	public void setAnyField(String anyField) {
+		this.anyField = anyField;
+	}
+
+	public Long getAnotherField() {
+		return anotherField;
+	}
+	
+	public void setAnotherField(Long anotherField) {
+		this.anotherField = anotherField;
 	}
 	
 	public Long getDuplicateThisFieldName() {
@@ -54,5 +47,4 @@ public class EntityFatherOfWrongEntities implements Serializable {
 	public void setDuplicateThisFieldName(Long duplicateThisFieldName) {
 		this.duplicateThisFieldName = duplicateThisFieldName;
 	}
-	
 }

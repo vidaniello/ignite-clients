@@ -1,4 +1,4 @@
-package com.github.vidaniello.ignite.entitytests;
+package com.github.vidaniello.ignite.entitytests2;
 
 import java.util.List;
 import java.util.Map;
@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import com.github.vidaniello.ignite.data.IgniteEntityScanner;
 
-public class TestReflections {
+public class TestReflections2 {
 
 	{
 	     //URL file di configurazione Log4j2
@@ -25,25 +25,10 @@ public class TestReflections {
 	@Test
 	public void test1() {
 		try {
-			String scanPath = TestReflections.class.getPackage().getName();
 			
-			IgniteEntityScanner.getInstance().setScanPath(scanPath);
+			IgniteEntityScanner.getInstance().setScanPath(TestReflections2.class.getPackage().getName());
 			
 			Map<Class<?>,List<String>> errors = IgniteEntityScanner.getInstance().getAllErrors();
-			
-			Assert.assertTrue(errors.get(WrongEntityNotSerializable.class).size()==1);
-			
-			Assert.assertTrue(errors.get(WrongEntityTwoPrimaryKey.class).size()==1);
-			
-			Assert.assertTrue(errors.get(WrongEntityTwoSameNameField.class).size()==2);
-			
-			Assert.assertTrue(errors.get(WrongEntityTwoPrimaryKeySubEntity.class).size()==1);
-			
-			Assert.assertTrue(errors.get(WrongEntityTwoSameNameFieldSubEntity.class).size()==2);
-			
-			Assert.assertTrue(errors.get(WrongEntityWithNotSerializablePrimaryKey.class).size()==1);
-			
-			Assert.assertTrue(errors.get(WrongEntityWithNotSerializableField.class).size()==1);
 			
 			
 			int i = 0;

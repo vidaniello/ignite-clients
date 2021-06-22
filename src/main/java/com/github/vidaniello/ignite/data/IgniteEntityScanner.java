@@ -3,7 +3,10 @@ package com.github.vidaniello.ignite.data;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -11,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,8 +47,10 @@ public class IgniteEntityScanner {
 	private boolean loadError;
 	private Set<Class<?>> classEntities = new HashSet<>();
 	private Map<Class<?>,List<String>> classEntities_errors = new HashMap<>();
-	private Map<Class<?>, Field> primaryKey_fields = new HashMap<>();
-	private Map<Class<?>, Set<Field>> entity_fields = new HashMap<>();
+	private Map<Class<?>,Field> primaryKey_fields = new HashMap<>();
+	private Map<Class<?>,Set<Field>> entity_fields = new HashMap<>();
+	
+	private Map<Class<?>,Boolean> checked_notPrimitiveFields = new HashMap<>();
 	
 	private IgniteEntityScanner() {
 		
@@ -64,7 +70,7 @@ public class IgniteEntityScanner {
 			load();
 		
 		if(loadError)
-			throw new Exception("Load error! check exception throwned at first invocation.");
+			throw new Exception("Load error! check exceptions throwned at first invocation.");
 		
 		return primaryKey_fields.get(clazz);
 	}
@@ -76,7 +82,7 @@ public class IgniteEntityScanner {
 	}
 	
 	
-	private void load() {
+	private synchronized void load() {
 		try {
 			log.trace("Start finding all @"+Entity.class.getCanonicalName()+" annotated classes...");
 			
@@ -145,6 +151,10 @@ public class IgniteEntityScanner {
 						errors.add("no @PrimaryKey annotated field.");
 					}else if(!twoPrimaryKey){
 						if(Serializable.class.isAssignableFrom(primaryKeyField.getType())) {
+							
+							//walk into primaryKey
+							checkOfField(primaryKeyField);
+							
 							primaryKey_fields.put(classEntity, primaryKeyField);
 							log.trace(classEntity.getCanonicalName()+" has @PrimaryKey annotated field '"+primaryKeyField.getName()+"' of type "+primaryKeyField.getType().getCanonicalName());
 						}else {
@@ -173,14 +183,21 @@ public class IgniteEntityScanner {
 						}
 						
 						if(!same) {
+							/*
 							if(Serializable.class.isAssignableFrom(fL.getType())) {
+							*/
+								//walk into field
+								checkOfField(fL);
+								
 								allEntityField.add(fL);
 								log.trace(classEntity.getCanonicalName()+" has field '"+fL.getName()+"' of type "+fL.getType().getCanonicalName()+" ok.");
+							/*
 							}else {
 								loadError=true;
-								log.error(classEntity.getCanonicalName()+" has a field who not implements Serializable.");
+								log.error(classEntity.getCanonicalName()+" has a field of type "+fL.getType().getCanonicalName()+" who not implements Serializable.");
 								errors.add("field who not implements Serializable.");
 							}
+							*/
 						} else {
 							log.error(classEntity.getCanonicalName()+" has field '"+fL.getName()+"' duplicate name.");
 							errors.add("field "+fL.getName()+"' duplicate name.");
@@ -212,7 +229,42 @@ public class IgniteEntityScanner {
 		
 	}
 	
-	private void checkOfFields() {
+	private boolean checkOfField(Field fToCheck) {
 		
+		Class<?> type = fToCheck.getType();
+		
+		String fieldName = fToCheck.getName();
+		boolean isPrimitive = type.isPrimitive();
+		boolean  isArray = type.isArray();
+		
+		if(ClassUtils.isPrimitiveOrWrapper(type)) {
+			log.trace("field "+fToCheck.getName()+" is primitive or wrapper, of type "+type.getCanonicalName());
+			return true;
+		}else if(type.isArray() && ClassUtils.isPrimitiveOrWrapper(type.getComponentType())) {
+			log.trace("field "+fToCheck.getName()+" is primitive or wrapper array, of type "+type.getComponentType().getCanonicalName());
+			return true;
+		}else if(Iterable.class.isAssignableFrom(type)) {
+			
+		}else if(Serializable.class.isAssignableFrom(type)) {
+			
+		}
+		
+		
+		return false;
 	}
+	
+	private void theParameterizedTypes(Field fToCheck) {
+		Class<?> type = fToCheck.getType();
+		
+		if(Iterable.class.isAssignableFrom(type)) {
+			ParameterizedType pt = ParameterizedType.class.cast(fToCheck.getGenericType());
+			Type[] arrType = pt.getActualTypeArguments();
+			
+		}else if(Map.class.isAssignableFrom(type)) {
+			ParameterizedType pt = ParameterizedType.class.cast(fToCheck.getGenericType());
+			Type[] arrType = pt.getActualTypeArguments();
+			
+		}
+	}
+
 }

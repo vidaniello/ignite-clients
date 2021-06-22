@@ -1,4 +1,4 @@
-package com.github.vidaniello.ignite.entitytests;
+package com.github.vidaniello.ignite.entitytests1;
 
 import com.github.vidaniello.ignite.data.Entity;
 import com.github.vidaniello.ignite.data.PrimaryKey;

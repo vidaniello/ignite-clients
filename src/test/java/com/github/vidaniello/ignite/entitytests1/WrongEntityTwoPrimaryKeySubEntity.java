@@ -1,17 +1,18 @@
-package com.github.vidaniello.ignite.entitytests;
+package com.github.vidaniello.ignite.entitytests1;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.github.vidaniello.ignite.data.Entity;
 import com.github.vidaniello.ignite.data.PrimaryKey;
 
 /**
- * Example annotated @Entity with wrong two annotated @PrimaryKey
+ * Example annotated @Entity with wrong two same name lowecase fields
  * @author Vincenzo D'Aniello (vidaniello@gmail.com) github.com/vidaniello
  *
  */
 @Entity
-public class WrongEntityTwoPrimaryKey implements Serializable {
+public class WrongEntityTwoPrimaryKeySubEntity extends EntityFatherOfWrongEntities {
 
 	/**
 	 * 
@@ -20,34 +21,22 @@ public class WrongEntityTwoPrimaryKey implements Serializable {
 	
 	
 	@PrimaryKey
-	private Long id;
-	
-	@PrimaryKey
-	private String id2;
+	private Long anotherId;
 	
 	private String anyField;
 	private Long anotherField;
 	
-	public WrongEntityTwoPrimaryKey() {
+	public WrongEntityTwoPrimaryKeySubEntity() {
 		
 	}
 
-	public Long getId() {
-		return id;
+	public Long getAnotherId() {
+		return anotherId;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setAnotherId(Long anotherId) {
+		this.anotherId = anotherId;
 	}
-
-	public String getId2() {
-		return id2;
-	}
-
-	public void setId2(String id2) {
-		this.id2 = id2;
-	}
-
 	public String getAnyField() {
 		return anyField;
 	}
@@ -63,5 +52,6 @@ public class WrongEntityTwoPrimaryKey implements Serializable {
 	public void setAnotherField(Long anotherField) {
 		this.anotherField = anotherField;
 	}
+	
 	
 }

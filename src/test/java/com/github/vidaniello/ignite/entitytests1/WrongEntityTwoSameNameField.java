@@ -1,4 +1,4 @@
-package com.github.vidaniello.ignite.entitytests;
+package com.github.vidaniello.ignite.entitytests1;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -12,7 +12,7 @@ import com.github.vidaniello.ignite.data.PrimaryKey;
  *
  */
 @Entity
-public class WrongEntityTwoPrimaryKeySubEntity extends EntityFatherOfWrongEntities {
+public class WrongEntityTwoSameNameField implements Serializable {
 
 	/**
 	 * 
@@ -21,22 +21,26 @@ public class WrongEntityTwoPrimaryKeySubEntity extends EntityFatherOfWrongEntiti
 	
 	
 	@PrimaryKey
-	private Long anotherId;
+	private Long id;
 	
 	private String anyField;
 	private Long anotherField;
 	
-	public WrongEntityTwoPrimaryKeySubEntity() {
+	private Date sameNameField;
+	private Date sameNameFIeld;
+	
+	public WrongEntityTwoSameNameField() {
 		
 	}
 
-	public Long getAnotherId() {
-		return anotherId;
+	public Long getId() {
+		return id;
 	}
 
-	public void setAnotherId(Long anotherId) {
-		this.anotherId = anotherId;
+	public void setId(Long id) {
+		this.id = id;
 	}
+
 	public String getAnyField() {
 		return anyField;
 	}
@@ -53,5 +57,20 @@ public class WrongEntityTwoPrimaryKeySubEntity extends EntityFatherOfWrongEntiti
 		this.anotherField = anotherField;
 	}
 	
+	public Date getSameNameField() {
+		return sameNameField;
+	}
+	
+	public void setSameNameField(Date sameNameField) {
+		this.sameNameField = sameNameField;
+	}
+	
+	public Date getSameNameFIeld() {
+		return sameNameFIeld;
+	}
+	
+	public void setSameNameFIeld(Date sameNameFIeld) {
+		this.sameNameFIeld = sameNameFIeld;
+	}
 	
 }

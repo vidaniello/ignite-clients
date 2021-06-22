@@ -1,18 +1,17 @@
-package com.github.vidaniello.ignite.entitytests;
+package com.github.vidaniello.ignite.entitytests1;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import com.github.vidaniello.ignite.data.Entity;
 import com.github.vidaniello.ignite.data.PrimaryKey;
 
 /**
- * Example annotated @Entity with wrong two same name lowecase fields
+ * Example annotated @Entity with wrong two annotated @PrimaryKey
  * @author Vincenzo D'Aniello (vidaniello@gmail.com) github.com/vidaniello
  *
  */
 @Entity
-public class WrongEntityTwoSameNameField implements Serializable {
+public class WrongEntityTwoPrimaryKey implements Serializable {
 
 	/**
 	 * 
@@ -23,13 +22,13 @@ public class WrongEntityTwoSameNameField implements Serializable {
 	@PrimaryKey
 	private Long id;
 	
+	@PrimaryKey
+	private String id2;
+	
 	private String anyField;
 	private Long anotherField;
 	
-	private Date sameNameField;
-	private Date sameNameFIeld;
-	
-	public WrongEntityTwoSameNameField() {
+	public WrongEntityTwoPrimaryKey() {
 		
 	}
 
@@ -39,6 +38,14 @@ public class WrongEntityTwoSameNameField implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getId2() {
+		return id2;
+	}
+
+	public void setId2(String id2) {
+		this.id2 = id2;
 	}
 
 	public String getAnyField() {
@@ -55,22 +62,6 @@ public class WrongEntityTwoSameNameField implements Serializable {
 	
 	public void setAnotherField(Long anotherField) {
 		this.anotherField = anotherField;
-	}
-	
-	public Date getSameNameField() {
-		return sameNameField;
-	}
-	
-	public void setSameNameField(Date sameNameField) {
-		this.sameNameField = sameNameField;
-	}
-	
-	public Date getSameNameFIeld() {
-		return sameNameFIeld;
-	}
-	
-	public void setSameNameFIeld(Date sameNameFIeld) {
-		this.sameNameFIeld = sameNameFIeld;
 	}
 	
 }
