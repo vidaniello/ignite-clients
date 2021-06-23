@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -150,18 +151,25 @@ public class IgniteEntityScanner {
 						log.error(classEntity.getCanonicalName()+" has no @PrimaryKey annotated field.");
 						errors.add("no @PrimaryKey annotated field.");
 					}else if(!twoPrimaryKey){
-						if(Serializable.class.isAssignableFrom(primaryKeyField.getType())) {
+						//if(Serializable.class.isAssignableFrom(primaryKeyField.getType())) {
 							
-							//walk into primaryKey
-							checkOfField(primaryKeyField);
-							
+						//walk into primaryKey
+						if(checkOfField(primaryKeyField)) {
 							primaryKey_fields.put(classEntity, primaryKeyField);
-							log.trace(classEntity.getCanonicalName()+" has @PrimaryKey annotated field '"+primaryKeyField.getName()+"' of type "+primaryKeyField.getType().getCanonicalName());
+							//log.trace(classEntity.getCanonicalName()+" has @PrimaryKey annotated field '"+primaryKeyField.getName()+"' of type "+primaryKeyField.getType().getCanonicalName());
+						} else {
+							loadError=true;
+							log.error(classEntity.getCanonicalName()+" has @PrimaryKey annotated field check failed.");
+							errors.add("@PrimaryKey annotated field check failed.");
+						}
+						
+							/*
 						}else {
 							loadError=true;
 							log.error(classEntity.getCanonicalName()+" has @PrimaryKey annotated field who not implements Serializable.");
 							errors.add("@PrimaryKey annotated field not implements Serializable.");
 						}
+						*/
 					}
 					
 					Set<Field> allEntityField = new HashSet<>();
@@ -183,21 +191,17 @@ public class IgniteEntityScanner {
 						}
 						
 						if(!same) {
-							/*
-							if(Serializable.class.isAssignableFrom(fL.getType())) {
-							*/
-								//walk into field
-								checkOfField(fL);
-								
+							
+							//walk into field
+							if(checkOfField(fL)) {
 								allEntityField.add(fL);
-								log.trace(classEntity.getCanonicalName()+" has field '"+fL.getName()+"' of type "+fL.getType().getCanonicalName()+" ok.");
-							/*
+								//log.trace(classEntity.getCanonicalName()+" has field '"+fL.getName()+"' of type "+fL.getType().getCanonicalName()+" ok.");
 							}else {
 								loadError=true;
-								log.error(classEntity.getCanonicalName()+" has a field of type "+fL.getType().getCanonicalName()+" who not implements Serializable.");
-								errors.add("field who not implements Serializable.");
+								log.error(classEntity.getCanonicalName()+" has field '"+fL.getName()+"' check errors.");
+								errors.add("field "+fL.getName()+"' check errors.");
 							}
-							*/
+						
 						} else {
 							log.error(classEntity.getCanonicalName()+" has field '"+fL.getName()+"' duplicate name.");
 							errors.add("field "+fL.getName()+"' duplicate name.");
@@ -229,13 +233,9 @@ public class IgniteEntityScanner {
 		
 	}
 	
-	private boolean checkOfField(Field fToCheck) {
+	private boolean checkOfField(Field fToCheck) throws ClassNotFoundException {
 		
 		Class<?> type = fToCheck.getType();
-		
-		String fieldName = fToCheck.getName();
-		boolean isPrimitive = type.isPrimitive();
-		boolean  isArray = type.isArray();
 		
 		if(ClassUtils.isPrimitiveOrWrapper(type)) {
 			log.trace("field "+fToCheck.getName()+" is primitive or wrapper, of type "+type.getCanonicalName());
@@ -243,28 +243,64 @@ public class IgniteEntityScanner {
 		}else if(type.isArray() && ClassUtils.isPrimitiveOrWrapper(type.getComponentType())) {
 			log.trace("field "+fToCheck.getName()+" is primitive or wrapper array, of type "+type.getComponentType().getCanonicalName());
 			return true;
-		}else if(Iterable.class.isAssignableFrom(type)) {
-			
+		}else if(type.isArray()) {
+			return checkArray(fToCheck, type.getComponentType());
+		}else if(Iterable.class.isAssignableFrom(type) || Map.class.isAssignableFrom(type)) {
+			return checkParameterizedTypes(fToCheck, type);
 		}else if(Serializable.class.isAssignableFrom(type)) {
-			
+			log.trace("field "+fToCheck.getName()+" is Serializable, of type "+type.getCanonicalName());
+			return true;
 		}
-		
-		
 		return false;
 	}
 	
-	private void theParameterizedTypes(Field fToCheck) {
-		Class<?> type = fToCheck.getType();
+	private boolean checkParameterizedTypes(Field fToCheck, Class<?> type) throws ClassNotFoundException {
+		ParameterizedType pt = ParameterizedType.class.cast(fToCheck.getGenericType());
+		Type[] arrType = pt.getActualTypeArguments();
+		
+		String str = pt.getRawType().getTypeName()+"<";
+		
+		int nRip = 1;
+		boolean exit = true;
+		while(exit) {
+			if(ParameterizedType.class.isAssignableFrom(arrType[0].getClass())) {
+				pt = ParameterizedType.class.cast(arrType[0]);
+				arrType = pt.getActualTypeArguments();
+				str +=  pt.getRawType().getTypeName()+"<";
+				nRip++;
+			}else
+				exit=false;
+		}
+		
 		
 		if(Iterable.class.isAssignableFrom(type)) {
-			ParameterizedType pt = ParameterizedType.class.cast(fToCheck.getGenericType());
-			Type[] arrType = pt.getActualTypeArguments();
+			Class<?> valueClass = Class.forName(arrType[0].getTypeName());
 			
+			if(Iterable.class.isAssignableFrom(valueClass) || Map.class.isAssignableFrom(valueClass)){
+				return checkParameterizedTypes(fToCheck, valueClass);
+			}else {
+				log.trace("field "+fToCheck.getName()+" is of type "+str+valueClass.getCanonicalName()+StringUtils.repeat(">", nRip));
+				return true;
+			}
 		}else if(Map.class.isAssignableFrom(type)) {
-			ParameterizedType pt = ParameterizedType.class.cast(fToCheck.getGenericType());
-			Type[] arrType = pt.getActualTypeArguments();
-			
+			Class<?> keyClass = Class.forName(arrType[0].getTypeName());
+			Class<?> valueClass = Class.forName(arrType[1].getTypeName());                                                                                                                                            
+			log.trace("field "+fToCheck.getName()+" is of type "+type.getCanonicalName()+"<"+keyClass.getCanonicalName()+","+valueClass.getCanonicalName()+">");
+			return true;
 		}
+		
+		return false;
 	}
 
+	private boolean checkArray(Field fToCheck, Class<?> type) throws ClassNotFoundException {
+		
+		if(Iterable.class.isAssignableFrom(type) || Map.class.isAssignableFrom(type)) {
+			return checkParameterizedTypes(fToCheck, type);
+		}else if(Serializable.class.isAssignableFrom(type)) {
+			log.trace("field "+fToCheck.getName()+" is Serializable array, of type "+type.getCanonicalName());
+			return true;
+		}
+		
+		return false;
+	}
 }
