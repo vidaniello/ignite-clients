@@ -46,6 +46,7 @@ public class IgniteEntityScanner {
 	private String scanPath;
 	private boolean initialized;
 	private boolean loadError;
+	private Set<String> packageScanned = new HashSet<>();
 	private Set<Class<?>> classEntities = new HashSet<>();
 	private Map<Class<?>,List<String>> classEntities_errors = new HashMap<>();
 	private Map<Class<?>,Field> primaryKey_fields = new HashMap<>();
@@ -62,20 +63,30 @@ public class IgniteEntityScanner {
 	 * Used for tests.
 	 * @param scanPath the package name
 	 */
-	public synchronized void setScanPath(String scanPath) {
+	private boolean setScanPath(String scanPath) {
 		this.scanPath = scanPath;
+		return packageScanned.add(scanPath);
 	}
 	
 	public synchronized Field getPrimaryKeyField(Class<? extends Serializable> clazz) throws Exception {
-		if(!initialized)
+		//if(!initialized)
+			//load();
+
+		if(setScanPath(clazz.getPackage().getName())) {
 			load();
+		}
 		
 		if(loadError)
-			throw new Exception("Load error! check exceptions throwned at first invocation.");
+			throw new Exception("Load error! check exceptions throwned.");
 		
 		return primaryKey_fields.get(clazz);
 	}
 	
+	/**
+	 * Find all entities errors.
+	 * @return
+	 * @throws Exception
+	 */
 	public synchronized Map<Class<?>,List<String>> getAllErrors() throws Exception {
 		if(!initialized)
 			load();
@@ -155,6 +166,7 @@ public class IgniteEntityScanner {
 							
 						//walk into primaryKey
 						if(checkOfField(primaryKeyField)) {
+							primaryKeyField.setAccessible(true);
 							primaryKey_fields.put(classEntity, primaryKeyField);
 							//log.trace(classEntity.getCanonicalName()+" has @PrimaryKey annotated field '"+primaryKeyField.getName()+"' of type "+primaryKeyField.getType().getCanonicalName());
 						} else {

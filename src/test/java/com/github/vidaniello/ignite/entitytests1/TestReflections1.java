@@ -26,7 +26,7 @@ public class TestReflections1 {
 	public void test1() {
 		try {
 			
-			IgniteEntityScanner.getInstance().setScanPath(TestReflections1.class.getPackage().getName());
+			IgniteEntityScanner.getInstance().getPrimaryKeyField(WrongEntityTwoPrimaryKey.class);
 			
 			Map<Class<?>,List<String>> errors = IgniteEntityScanner.getInstance().getAllErrors();
 			

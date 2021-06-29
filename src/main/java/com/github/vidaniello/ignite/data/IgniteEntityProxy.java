@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 import javassist.util.proxy.MethodFilter;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
-import javassist.util.proxy.ProxyObject;
 
 public class IgniteEntityProxy implements MethodHandler, MethodFilter{
 
@@ -33,6 +32,6 @@ public class IgniteEntityProxy implements MethodHandler, MethodFilter{
 	@Override
 	public Object invoke(Object self, Method thisMethod, Method proceed, Object[] args) throws Throwable {
 		
-		return "AGLIO";
+		return "";
 	}
 }
