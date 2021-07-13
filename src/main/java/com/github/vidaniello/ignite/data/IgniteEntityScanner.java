@@ -49,10 +49,13 @@ public class IgniteEntityScanner {
 	private Set<String> packageScanned = new HashSet<>();
 	private Set<Class<?>> classEntities = new HashSet<>();
 	private Map<Class<?>,List<String>> classEntities_errors = new HashMap<>();
+	
 	private Map<Class<?>,Field> primaryKey_fields = new HashMap<>();
 	private Map<Class<?>,Set<Field>> entity_fields = new HashMap<>();
 	
-	private Map<Class<?>,Boolean> checked_notPrimitiveFields = new HashMap<>();
+	private Map<Class<?>,Set<Field>> entity_fields_relations = new HashMap<>();
+	
+	//private Map<Class<?>,Boolean> checked_notPrimitiveFields = new HashMap<>();
 	
 	private IgniteEntityScanner() {
 		
@@ -206,6 +209,7 @@ public class IgniteEntityScanner {
 							
 							//walk into field
 							if(checkOfField(fL)) {
+								fL.setAccessible(true);
 								allEntityField.add(fL);
 								//log.trace(classEntity.getCanonicalName()+" has field '"+fL.getName()+"' of type "+fL.getType().getCanonicalName()+" ok.");
 							}else {
@@ -215,6 +219,7 @@ public class IgniteEntityScanner {
 							}
 						
 						} else {
+							loadError=true;
 							log.error(classEntity.getCanonicalName()+" has field '"+fL.getName()+"' duplicate name.");
 							errors.add("field "+fL.getName()+"' duplicate name.");
 						}
@@ -307,7 +312,8 @@ public class IgniteEntityScanner {
 	private boolean checkArray(Field fToCheck, Class<?> type) throws ClassNotFoundException {
 		
 		if(Iterable.class.isAssignableFrom(type) || Map.class.isAssignableFrom(type)) {
-			return checkParameterizedTypes(fToCheck, type);
+			//return checkParameterizedTypes(fToCheck, type);
+			return false;
 		}else if(Serializable.class.isAssignableFrom(type)) {
 			log.trace("field "+fToCheck.getName()+" is Serializable array, of type "+type.getCanonicalName());
 			return true;
