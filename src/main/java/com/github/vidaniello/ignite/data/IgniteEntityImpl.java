@@ -41,7 +41,6 @@ public abstract class IgniteEntityImpl<PRIMARY_KEY extends Serializable> impleme
 	
 	@Override
 	public synchronized <T extends IgniteEntity<PRIMARY_KEY>> T put(String fieldName, Serializable value) throws Exception {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
