@@ -20,7 +20,6 @@ public class IgniteEntityManagerImpl implements IgniteEntityManager {
 	//private Ignite ignite;
 	
 	
-	@SuppressWarnings("resource")
 	public <T extends Serializable> T create(T entity) throws CacheException, Exception{
 		
 		IgniteCache<Serializable,T> cache = ClientProvider.instance().ignite().cache(entity.getClass().getCanonicalName());
