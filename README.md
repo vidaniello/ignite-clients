@@ -6,7 +6,7 @@ This dependency contain:
 ## Cluster clients
 First, the class [ClientProvider](https://github.com/vidaniello/ignite-clients/blob/main/src/main/java/com/github/vidaniello/ignite/ClientProvider.java), on first load, search the file ClientProvider.property_filename in the  classloader resource path (getClassLoader().getResourceAsStream(...)), if not present, read the property system ClientProvider.systemProperty_property_filename.
 
-The property file, can contain *n* cluster config file, or better to say, *n* cluster endpoits.
+The property file, can contain *n* cluster config file, or better to say, *n* cluster endpoints.
 An example of the properies file can be the following:
 
 "src/main/resources/igniteClient.properties"[(here an example)](https://github.com/vidaniello/ignite-clients/blob/main/src/test/resources/igniteClient.properties)
