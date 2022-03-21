@@ -136,7 +136,8 @@ public class IgniteEntityScanner {
  				List<Field> allField = FieldUtils.getAllFieldsList(classEntity)
  						.stream()
  						.filter(field->{
- 							return !Modifier.isStatic(field.getModifiers()) && !Modifier.isTransient(field.getModifiers());
+ 							return !Modifier.isStatic(field.getModifiers()) && !Modifier.isTransient(field.getModifiers())
+ 									&& !field.isAnnotationPresent(Transient.class);
  						})
  						.collect(Collectors.toList());
 				try {
