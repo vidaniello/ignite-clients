@@ -46,7 +46,7 @@ public class TestReflections2 {
 		}
 	}
 	
-	@Test @Ignore
+	@Test //@Ignore
 	public void test1() {
 		try {
 			

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.github.vidaniello.ignite.data.Entity;
 import com.github.vidaniello.ignite.data.PrimaryKey;
+import com.github.vidaniello.ignite.data.Transient;
 
 @Entity
 public class EntityWithFieldSerializable implements Serializable {
@@ -19,8 +20,9 @@ public class EntityWithFieldSerializable implements Serializable {
 	@PrimaryKey
 	private PrimaryKeyWithFieldsSerializable id;
 	
-	//private int anInt;
-	//private Integer anIntWrapped;
+	private transient int anInt;
+	@Transient
+	private Integer anIntWrapped;
 	//private String aString;
 	//private FieldSerializable field1;
 	

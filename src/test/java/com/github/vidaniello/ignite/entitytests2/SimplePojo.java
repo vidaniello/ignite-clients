@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.github.vidaniello.ignite.data.Entity;
 import com.github.vidaniello.ignite.data.PrimaryKey;
 
-@Entity
+//@Entity
 public class SimplePojo implements Serializable {
 
 	/**
