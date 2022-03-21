@@ -44,7 +44,7 @@ public class IgniteEntityScanner {
 	private Logger log = LogManager.getLogger();
 	
 	private String scanPath;
-	private boolean initialized;
+	//private boolean initialized;
 	private boolean loadError;
 	private Set<String> packageScanned = new HashSet<>();
 	private Set<Class<?>> classEntities = new HashSet<>();
@@ -91,8 +91,8 @@ public class IgniteEntityScanner {
 	 * @throws Exception
 	 */
 	public synchronized Map<Class<?>,List<String>> getAllErrors() throws Exception {
-		if(!initialized)
-			load();
+		//if(!initialized)
+			//load();
 		return classEntities_errors;
 	}
 	
@@ -135,7 +135,9 @@ public class IgniteEntityScanner {
 				
  				List<Field> allField = FieldUtils.getAllFieldsList(classEntity)
  						.stream()
- 						.filter(field->!Modifier.isStatic(field.getModifiers()))
+ 						.filter(field->{
+ 							return !Modifier.isStatic(field.getModifiers()) && !Modifier.isTransient(field.getModifiers());
+ 						})
  						.collect(Collectors.toList());
 				try {
 					//check
