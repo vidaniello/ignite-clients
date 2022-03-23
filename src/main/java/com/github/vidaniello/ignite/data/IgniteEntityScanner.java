@@ -266,7 +266,8 @@ public class IgniteEntityScanner {
 		}else if(type.isArray()) {
 			return checkArray(fToCheck, type.getComponentType());
 		}else if(Iterable.class.isAssignableFrom(type) || Map.class.isAssignableFrom(type)) {
-			return checkParameterizedTypes(fToCheck, type);
+			return checkParameterizedTypesxxx(fToCheck);
+			//return checkParameterizedTypes(fToCheck, type);
 		}else if(Serializable.class.isAssignableFrom(type)) {
 			log.trace("field "+fToCheck.getName()+" is Serializable, of type "+type.getCanonicalName());
 			return true;
@@ -315,6 +316,9 @@ public class IgniteEntityScanner {
 	private boolean checkArray(Field fToCheck, Class<?> type) throws ClassNotFoundException {
 		
 		if(Iterable.class.isAssignableFrom(type) || Map.class.isAssignableFrom(type)) {
+			
+			//Primitive arrays of parametrized type
+			//Collection<Collection<Serializable>>[]
 			//return checkParameterizedTypes(fToCheck, type);
 			return false;
 		}else if(Serializable.class.isAssignableFrom(type)) {
@@ -323,5 +327,51 @@ public class IgniteEntityScanner {
 		}
 		
 		return false;
+	}
+	
+	
+	
+	private boolean checkParameterizedTypesxxx(Field fToCheck) throws ClassNotFoundException {
+		
+		Type type = fToCheck.getGenericType();
+		
+		//if(ParameterizedType.class.isAssignableFrom()
+		//checkParameterizedTypesxxx(fToCheck.getGenericType());
+		
+		return true;
+	}
+	
+	
+	
+	
+	private boolean checkParameterizedTypesxxx(ParameterizedType pt) throws ClassNotFoundException {
+				
+		Type[] arrType = pt.getActualTypeArguments();
+		
+		for(Type pType : arrType)
+			recursiveCheckOfParametrizedType(pType);
+		
+		return true;
+	}
+	
+	private void recursiveCheckOfParametrizedType(Type type) throws ClassNotFoundException {
+		
+		Class<?> cType = type.getClass();
+		String pName = type.getTypeName();
+		
+		if(ParameterizedType.class.isAssignableFrom(cType)){
+			
+			ParameterizedType pt = ParameterizedType.class.cast(type);
+			Type[] arrType = pt.getActualTypeArguments();
+			
+			for(Type pType : arrType)
+				recursiveCheckOfParametrizedType(pType);
+			
+		} else {
+			
+			Class<?> concreteClass = Class.forName(pName);
+			
+			int i = 0;
+		}
 	}
 }

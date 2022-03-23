@@ -26,7 +26,7 @@ public class EntityWithFieldSerializable implements Serializable {
 	//private String aString;
 	//private FieldSerializable field1;
 	
-	//private int[] anArrayOfInt;
+	//private int[][][] anArrayOfInt;
 	//private Integer[] anArrayOfIntWrapped;
 	//private String[] anArrayOfString;
 	//private FieldSerializable[] anArrayOfFieldSerializable;
@@ -38,9 +38,11 @@ public class EntityWithFieldSerializable implements Serializable {
 	//private Map<Integer, Integer> aMapOfIntInt;
 	
 	
-	//private Collection<Collection<Collection<String>>> d;
+	private Collection<Collection<Collection<String>>> d;
 	
-	private Map<Map<Map<String,String>,Map<String,String>>,Map<Map<String,String>,Map<String,String>>> f;
+	//private Collection<Collection<String>>[] abc;
+	
+	//private Map<Map<Map<String,String>,Map<String,String>>,Map<Map<String,String>,Map<String,String>>> f;
 	
 	public EntityWithFieldSerializable() {
 		
